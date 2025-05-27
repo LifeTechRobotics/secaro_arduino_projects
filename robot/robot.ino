@@ -1,60 +1,60 @@
-//Control rotation angle or speed and direction by sending pulse 
-//Servo1 PIN 19
-//Servo2 PIN 22
-
-#define DUTY_LOW 1500
-#define DUTY_MID 5000
-#define DUTY_HIGH 8500
-#define DUTY_STEP 1000
+// Control rotation angle or speed and direction by sending pulse 
+// Servo1 PIN 19
+// Servo2 PIN 22
 
 #include "esp32-hal-ledc.h"
 #include "M5Atom.h"
 
-const int ledPin1 = 19;       // Servo1 PIN 19 を使用
-const int ledPin2 = 22;       // Servo2 PIN 22 を使用
-const int pwmChannel1 = 1;    // チャンネル 1 を使う
-const int pwmChannel2 = 2;    // チャンネル 2 を使う
-const int freq = 50;         // PWM 周波数
-const int resolution = 16;   // 8ビットの分解能（0～255）
+#define DUTY_F_LOW 5100   // 正回転の最小値
+#define DUTY_R_LOW 4600   // 逆回転の最小値
+#define DUTY_STEP 300
+#define PIN_1 19
+#define PIN_2 22
+#define CHANNEL_1 1
+#define CHANNEL_2 2
+#define FREQ 50           // PWM 周波数
+#define RESOLUTION 16     // 16ビットの分解能（0～65535）  
 
 void setup() {
     // M5 の初期化
-    M5.begin(true, false, true);
+    M5.begin(true, false, false);
+
     // PWM チャンネルの初期化    
-    ledcSetup(pwmChannel1, freq, resolution);
-    ledcSetup(pwmChannel2, freq, resolution);
+    ledcSetup(CHANNEL_1, FREQ, RESOLUTION);
+    ledcSetup(CHANNEL_2, FREQ, RESOLUTION);
+
     // チャンネルとピンの紐づけ
-    ledcAttachPin(ledPin1, pwmChannel1);
-    ledcAttachPin(ledPin2, pwmChannel2);
+    ledcAttachPin(PIN_1, CHANNEL_1);
+    ledcAttachPin(PIN_2, CHANNEL_2);
 }
 
 bool run = true;
 
 void loop() {
   if(run == true) {
-    //前進
-    ledcWrite(pwmChannel1, DUTY_MID + DUTY_STEP);
-    ledcWrite(pwmChannel2, DUTY_MID - DUTY_STEP);
+    // 前進
+    ledcWrite(CHANNEL_1, DUTY_F_LOW + DUTY_STEP);
+    ledcWrite(CHANNEL_2, DUTY_R_LOW - DUTY_STEP);
     delay(2000);
 
-    //後退
-    ledcWrite(pwmChannel1, DUTY_MID - DUTY_STEP);
-    ledcWrite(pwmChannel2, DUTY_MID + DUTY_STEP);
+    // 後退
+    ledcWrite(CHANNEL_1, DUTY_R_LOW - DUTY_STEP);
+    ledcWrite(CHANNEL_2, DUTY_F_LOW + DUTY_STEP);
     delay(2000);
     
-    //左旋回
-    ledcWrite(pwmChannel1, DUTY_MID - DUTY_STEP);
-    ledcWrite(pwmChannel2, DUTY_MID - DUTY_STEP);
+    // 左旋回
+    ledcWrite(CHANNEL_1, DUTY_R_LOW - DUTY_STEP);
+    ledcWrite(CHANNEL_2, DUTY_R_LOW - DUTY_STEP);
     delay(2000);
 
-    //右旋回
-    ledcWrite(pwmChannel1, DUTY_MID + DUTY_STEP);
-    ledcWrite(pwmChannel2, DUTY_MID + DUTY_STEP);
+    // 右旋回
+    ledcWrite(CHANNEL_1, DUTY_F_LOW + DUTY_STEP);
+    ledcWrite(CHANNEL_2, DUTY_F_LOW + DUTY_STEP);
     delay(2000);
 
     // 停止
-    ledcWrite(pwmChannel1, 0);
-    ledcWrite(pwmChannel2, 0);
+    ledcWrite(CHANNEL_1, 0);
+    ledcWrite(CHANNEL_2, 0);
 
     run = false;
   }
