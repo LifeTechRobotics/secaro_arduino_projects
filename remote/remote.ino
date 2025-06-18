@@ -11,8 +11,6 @@
 #define DUTY_STEP 100
 #define PIN_1 19
 #define PIN_2 22
-#define CHANNEL_1 1
-#define CHANNEL_2 2
 #define FREQ 50                // PWM 周波数
 #define RESOLUTION 16          // 16ビットの分解能（0～65535）
 #define DEVICE_NAME "Nemueee"  // Bluetooth デバイス名
@@ -30,13 +28,9 @@ void setup() {
     // M5 の初期化
     M5.begin(true, false, false);
 
-    // PWM チャンネルの初期化    
-    ledcSetup(CHANNEL_1, FREQ, RESOLUTION);
-    ledcSetup(CHANNEL_2, FREQ, RESOLUTION);
-
-    // チャンネルとピンの紐づけ
-    ledcAttachPin(PIN_1, CHANNEL_1);
-    ledcAttachPin(PIN_2, CHANNEL_2);
+    // LEDC PIN 設定
+    ledcAttach(PIN_1, FREQ, RESOLUTION);
+    ledcAttach(PIN_2, FREQ, RESOLUTION);
 
     // Bluetooth 待ち受け開始
     SerialBT.begin(DEVICE_NAME);
@@ -84,24 +78,24 @@ void loop() {
 
   if (command == 'F') {
     // 前進
-    ledcWrite(CHANNEL_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-    ledcWrite(CHANNEL_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
+    ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
   } else if (command == 'B') {
     // 後退
-    ledcWrite(CHANNEL_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
-    ledcWrite(CHANNEL_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
+    ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
   } else if (command == 'L') {
     // 左旋回
-    ledcWrite(CHANNEL_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
-    ledcWrite(CHANNEL_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
+    ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
   } else if (command == 'R') {
     // 右旋回
-    ledcWrite(CHANNEL_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-    ledcWrite(CHANNEL_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
+    ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
   } else if (command == 'S') {
     // 停止
-    ledcWrite(CHANNEL_1, 0);
-    ledcWrite(CHANNEL_2, 0);
+    ledcWrite(PIN_1, 0);
+    ledcWrite(PIN_2, 0);
   } else if (command == 'P') {
     // 通信確認用
     SerialBT.println("PING OK");

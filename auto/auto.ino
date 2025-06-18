@@ -72,13 +72,9 @@ void setup() {
     M5.begin(true, false, false); // Serial, I2C, LED
     Wire.begin(SDA_PIN, SCL_PIN); // I2C 初期化
 
-    // PWM チャンネルの初期化    
-    ledcSetup(CHANNEL_1, FREQ, RESOLUTION);
-    ledcSetup(CHANNEL_2, FREQ, RESOLUTION);
-
-    // チャンネルとピンの紐づけ
-    ledcAttachPin(PIN_1, CHANNEL_1);
-    ledcAttachPin(PIN_2, CHANNEL_2);
+    // LEDC PIN 設定
+    ledcAttachChannel(PIN_1, FREQ, RESOLUTION, CHANNEL_1);
+    ledcAttachChannel(PIN_2, FREQ, RESOLUTION, CHANNEL_2);
 
     // センサーサーボ のピン設定
     sensorServo.attach(PIN_SS);
@@ -167,8 +163,8 @@ void loop() {
       avoidTimeStart = millis();
     } else {
       // 前進
-      ledcWrite(CHANNEL_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-      ledcWrite(CHANNEL_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
+      ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
+      ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
 
       currentMillis = millis();
       if (previousMillis == 0) { // 初回の場合
@@ -202,12 +198,12 @@ void loop() {
     }
   } else if (command == 'B') {
     // 後退
-    ledcWrite(CHANNEL_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
-    ledcWrite(CHANNEL_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
+    ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
   } else if (command == 'L') {
     // 左旋回
-    ledcWrite(CHANNEL_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
-    ledcWrite(CHANNEL_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
+    ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
   } else if (command == 'R') {
     if (obstacleFlg) { // 回避モード
       avoidTimeCurrent = millis();
@@ -230,18 +226,18 @@ void loop() {
         command_taihi = '\0';        
       } else {
         // 右旋回
-        ledcWrite(CHANNEL_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-        ledcWrite(CHANNEL_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+        ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
+        ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
       }
     } else {
       // 右旋回
-      ledcWrite(CHANNEL_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-      ledcWrite(CHANNEL_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+      ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
+      ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
     }
   } else if (command == 'S') {
     // 停止
-    ledcWrite(CHANNEL_1, 0);
-    ledcWrite(CHANNEL_2, 0);
+    ledcWrite(PIN_1, 0);
+    ledcWrite(PIN_2, 0);
   } else if (command == 'P') {
     // 通信確認用
     SerialBT.println("PING OK");
