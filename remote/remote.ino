@@ -13,7 +13,7 @@
 #define PIN_2 22
 #define FREQ 50                // PWM 周波数
 #define RESOLUTION 16          // 16ビットの分解能（0～65535）
-#define DEVICE_NAME "Nemueee"  // Bluetooth デバイス名
+#define DEVICE_NAME "Secaro"   // Bluetooth デバイス名
 
 BluetoothSerial SerialBT;
 char command = '\0';

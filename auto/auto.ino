@@ -21,7 +21,7 @@
 #define CHANNEL_2 7            // チャンネル 2
 #define FREQ 50                // PWM 周波数
 #define RESOLUTION 16          // 16ビットの分解能（0～65535）
-#define DEVICE_NAME "Nemueee"  // Bluetooth デバイス名
+#define DEVICE_NAME "Secaro"  // Bluetooth デバイス名
 
 // I2C PIN
 #define SDA_PIN 26
