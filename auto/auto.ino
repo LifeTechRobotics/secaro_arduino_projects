@@ -1,6 +1,6 @@
 // Control rotation angle or speed and direction by sending pulse 
-// 車輪サーボ PIN 19
-// 車輪サーボ PIN 22
+// 車輪サーボ1 PIN 19
+// 車輪サーボ2 PIN 22
 // センサーサーボ PIN 23
 
 #include <ESP32Servo.h>
@@ -14,14 +14,14 @@
 #define DUTY_R_LOW 4600        // 逆回転の最小値
 #define DUTY_STEP 100
 
-#define PIN_1 19               // 車輪サーボ PIN1
-#define PIN_2 22               // 車輪サーボ PIN2
-#define PIN_SS 23              // センサーサーボ PIN
-#define CHANNEL_1 6            // チャンネル 1
-#define CHANNEL_2 7            // チャンネル 2
-#define FREQ 50                // PWM 周波数
+#define PIN_1 19               // 車輪サーボ1
+#define PIN_2 22               // 車輪サーボ2
+#define PIN_SS 23              // センサーサーボ
+#define CHANNEL_1 6            // チャンネル1
+#define CHANNEL_2 7            // チャンネル2
+#define FREQ 50                // PWM周波数
 #define RESOLUTION 16          // 16ビットの分解能（0～65535）
-#define DEVICE_NAME "Secaro"  // Bluetooth デバイス名
+#define DEVICE_NAME "Secaro"   // Bluetoothデバイス名
 
 // I2C PIN
 #define SDA_PIN 26
@@ -31,22 +31,22 @@
 #define DEGREE_MIN 30
 #define DEGREE_MAX 150
 
-#define INTERVAL_TIME_SS 500   // センサーサーボの回転間隔
-#define OBSTACLE_THRESHOLD 70  // 障害探知距離(mm)
+#define INTERVAL_TIME_SS 500         // センサーサーボの回転間隔
+#define OBSTACLE_THRESHOLD 70        // 障害探知距離（mm）
 
 // タイムアウト
 #define TIME_OUT_SENSOR 100
 #define TIME_OUT_SERIAL 500
 
 BluetoothSerial SerialBT;
-char command = '\0';        // 指令
-short spdL = 1;             // 左輪速度
-short spdR = 1;             // 右輪速度
+char command = '\0';                 // 指令
+short spdL = 1;                      // 左輪速度
+short spdR = 1;                      // 右輪速度
 
 // センサーサーボ変数
 Servo sensorServo;
 int deg = DEGREE_MIN;                // 角度
-int deg_step = 30;                   // 1 回につきの回転角度
+int deg_step = 30;                   // 1回につきの回転角度
 bool ccw = true;                     // 回転方向
 unsigned long previousMillis = 0;    // 前回回転後時間
 unsigned long currentMillis  = 0;    // 現在時間
@@ -55,32 +55,32 @@ unsigned long currentMillis  = 0;    // 現在時間
 VL53L1X sensor;
 
 // 回避変数
-bool obstacleFlg = false;  // 回避フラグ
-short spdL_taihi = 1;      // 回避前の車輪速度(左)
-short spdR_taihi = 1;      // 回避前の車輪速度(右)
-char command_taihi = '\0'; // 回避前の進行方向
-int avoidTimeNeed = 0;     // 回避に必要な時間
-int avoidTimeStart = 0;    // 回避開始時間
-int avoidTimeCurrent = 0;  // 現在時間
+bool obstacleFlg = false;            // 回避フラグ
+short spdL_taihi = 1;                // 回避前の車輪速度（左）
+short spdR_taihi = 1;                // 回避前の車輪速度（右）
+char command_taihi = '\0';           // 回避前の進行方向
+int avoidTimeNeed = 0;               // 回避に必要な時間
+int avoidTimeStart = 0;              // 回避開始時間
+int avoidTimeCurrent = 0;            // 現在時間
 
 
 void setup() {
     Serial.begin(115200);
     delay(100);
 
-    // M5 の初期化
+    // M5の初期化
     M5.begin(true, false, false); // Serial, I2C, LED
-    Wire.begin(SDA_PIN, SCL_PIN); // I2C 初期化
+    Wire.begin(SDA_PIN, SCL_PIN); // I2C初期化
 
-    // LEDC PIN 設定
+    // LEDC PIN設定
     ledcAttachChannel(PIN_1, FREQ, RESOLUTION, CHANNEL_1);
     ledcAttachChannel(PIN_2, FREQ, RESOLUTION, CHANNEL_2);
 
-    // センサーサーボ のピン設定
+    // センサーサーボのPIN設定
     sensorServo.attach(PIN_SS);
     sensorServo.write(DEGREE_MIN);
 
-    // TOF センサーの初期化
+    // TOFセンサーの初期化
     sensor.setBus(&Wire);
     sensor.setTimeout(TIME_OUT_SENSOR);
     if (!sensor.init()) {
@@ -91,7 +91,7 @@ void setup() {
       sensor.startContinuous(50); // 測定間隔
     }
 
-    // Bluetooth 待ち受け開始
+    // Bluetooth待ち受け開始
     SerialBT.begin(DEVICE_NAME);
     delay(200);
     SerialBT.setTimeout(2000);
