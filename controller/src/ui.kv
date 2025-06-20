@@ -1,0 +1,139 @@
+#:import hex kivy.utils.get_color_from_hex
+
+<RoundedButton@Button>:
+    size_hint: None, None
+    size: 150, 150
+    font_name: 'Japanese'
+    font_size: 24
+    background_normal: ""
+    background_color: (38/255, 73/255, 157/255, 1)
+
+<NameButton@Button>:
+    size_hint_y: None
+    height: 60
+    font_name: 'Japanese'
+    font_size: 18
+    color: (0, 0, 0, 1)
+    background_normal: ""
+    background_color: (211/255, 211/255, 211/255, 1)
+
+<StatusButton@Button>:
+    disabled: True
+    background_disabled_normal: ""
+    disabled_color: 0.5, 0.5, 0.5, 1
+    size_hint_x: 0.3
+    size_hint_y: None
+    height: 60
+    font_name: 'Japanese'
+    font_size: 18
+    color: (0, 0, 0, 1)
+    background_normal: ""
+    background_color: (211/255, 211/255, 211/255, 1)
+
+<VerticalSlider@Slider>:
+    orientation: "vertical"
+    range: (1, 9)
+    step: 1
+    cursor_size: (50, 50)
+    value_track: True
+    value_track_color: [1, 0, 0, 1]
+    value_track_width: 4
+    sensitivity: "handle"
+
+<CustomPopup>
+    title: ""
+    size_hint: 0.6, 0.4
+    auto_dismiss: False
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        Label:
+            text: ""
+            font_name: 'Japanese'
+            font_size: 18
+            id: msg_label
+        Button:
+            text: "OK"
+            size_hint: 1, 0.3
+            id: ok_button
+
+
+<MyLayout>:
+
+    BoxLayout:
+        orientation: "horizontal"
+        size: root.width, root.height
+        padding: 20
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 50
+
+            Button:
+                size_hint: 1, 0.2
+                id: scan_button
+                text: "デバイスをスキャン"
+                font_name: 'Japanese'
+                font_size: 24
+                background_normal: ""
+                background_color: (38/255, 73/255, 157/255, 1)
+                disabled_color: 0.5, 0.5, 0.5, 1
+                on_press: root.start_scan_devices()
+
+            ScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+
+                GridLayout:
+                    cols: 2
+                    spacing: 10
+                    size_hint_y: None
+                    height: self.minimum_height
+                    id: device_list
+
+
+        RelativeLayout:
+
+            RelativeLayout:
+                size_hint: None, None
+                size: 150, 150
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+                RoundedButton:
+                    pos: [0, 0]
+                    text: "停止"
+                    on_press: root.stop()
+                RoundedButton:
+                    pos: [0, 160]
+                    text: "↑"
+                    on_press: root.forward()
+                RoundedButton:
+                    pos: [-160, 0]
+                    text: "←"
+                    on_press: root.left()
+                VerticalSlider:
+                    pos: [-160, 170]
+                    id: left_speed
+                    on_touch_move: root.set_speed_l()
+                Label:
+                    pos: [-160, 270]
+                    text: str(int(left_speed.value))
+                    font_name: 'Japanese'
+                    font_size: 24
+                RoundedButton:
+                    pos: [160, 0]
+                    text: "→"
+                    on_press: root.right()
+                VerticalSlider:
+                    pos: [160, 170]
+                    id: right_speed
+                    on_touch_move: root.set_speed_r()
+                Label:
+                    pos: [160, 270]
+                    text: str(int(right_speed.value))
+                    font_name: 'Japanese'
+                    font_size: 24
+                RoundedButton:
+                    pos: [0, -160]
+                    text: "↓"
+                    on_press: root.back()
