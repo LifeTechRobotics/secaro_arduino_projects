@@ -11,7 +11,7 @@
 #define RESOLUTION 12     // 12ビットの分解能（4096段階）
 
 // 各デューティ比
-int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止
+const int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止
 const int step = 50;         // デューティの刻み幅
 
 // 実行フラグ

@@ -9,9 +9,9 @@
 #define RESOLUTION 12     // 12ビットの分解能（4096段階）
 
 // 各デューティ比（12bit対応）
-int minDuty = (int)(4096 * 0.5 / 20.0); // 0.5ms に相当する duty（約102） → 最大逆回転
-int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止
-int maxDuty = (int)(4096 * 2.5 / 20.0); // 2.5ms に相当する duty（約512） → 最大正回転
+const int minDuty = (int)(4096 * 0.5 / 20.0); // 0.5ms に相当する duty（約102） → 最大逆回転
+const int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止
+const int maxDuty = (int)(4096 * 2.5 / 20.0); // 2.5ms に相当する duty（約512） → 最大正回転
 
 // デューティの刻み幅
 const int step = 5;          // 小さくすると精細に制御できる
