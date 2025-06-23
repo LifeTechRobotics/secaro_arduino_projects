@@ -4,14 +4,22 @@
 #include "esp32-hal-ledc.h"
 #include "M5Atom.h"
 
-#define DUTY_F_LOW 5100   // 正回転の最小値
-#define DUTY_F_HIGH 8500  // 正回転の最大値
-#define DUTY_R_LOW 4600   // 逆回転の最小値
-#define DUTY_R_HIGH 1200  // 正回転の最大値
 #define PIN_1 19          // 車輪サーボ1
 #define FREQ 50           // PWM周波数
-#define RESOLUTION 16     // 16ビットの分解能（0～65535）
+#define RESOLUTION 12     // 12ビットの分解能（4096段階）
 
+// 各デューティ比（12bit対応）
+int minDuty = (int)(4096 * 0.5 / 20.0); // 0.5ms に相当する duty（約102） → 最大逆回転
+int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止
+int maxDuty = (int)(4096 * 2.5 / 20.0); // 2.5ms に相当する duty（約512） → 最大正回転
+
+// デューティの刻み幅
+const int step = 5;          // 小さくすると精細に制御できる
+
+// delay時間
+const int dTime = 30;     // 小さいくすると、加速が速くなり、大きくするとなめらかに
+
+// 実行フラグ
 bool run = true;
 
 void setup() {
@@ -24,29 +32,46 @@ void setup() {
 
     // LEDC PIN設定
     ledcAttach(PIN_1, FREQ, RESOLUTION);
+
+    // 初期停止
+    ledcWrite(PIN_1, centerDuty);
+    delay(1000);
 }
 
 
 void loop() {
   if(run == true) {
-    // 正回転
-    for(int i = DUTY_F_LOW; i < DUTY_F_HIGH; i = i + 100){  
-      ledcWrite(PIN_1, i);
-      delay(50);
+    // ゆっくり正回転（停止→最大正転）
+    for (int duty = centerDuty; duty <= maxDuty; duty += step) {
+      ledcWrite(PIN_1, duty);
+      delay(dTime);
     }
 
-    // 停止
-    ledcWrite(PIN_1, 0);
-    delay(1000);
-    
-    // 逆回転
-    for(int i = DUTY_R_LOW; i > DUTY_R_HIGH; i = i - 100){  
-      ledcWrite(PIN_1, i);
-      delay(50);
+    delay(1000);  // 最大速度で1秒回転
+
+    // ゆっくり停止（正転→停止）
+    for (int duty = maxDuty; duty >= centerDuty; duty -= step) {
+      ledcWrite(PIN_1, duty);
+      delay(dTime);
     }
-    
-    // 停止
-    ledcWrite(PIN_1, 0);
+
+    delay(1000);
+
+    // ゆっくり逆回転（停止→最大逆転）
+    for (int duty = centerDuty; duty >= minDuty; duty -= step) {
+      ledcWrite(PIN_1, duty);
+      delay(dTime);
+    }
+
+    delay(1000);  // 最大逆回転で1秒
+
+    // ゆっくり停止（逆転→停止）
+    for (int duty = minDuty; duty <= centerDuty; duty += step) {
+      ledcWrite(PIN_1, duty);
+      delay(dTime);
+    }
+
+    delay(1000);
 
     run = false;
   }

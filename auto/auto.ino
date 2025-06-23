@@ -10,17 +10,13 @@
 #include "M5Atom.h"
 #include "BluetoothSerial.h"
 
-#define DUTY_F_LOW 5100        // 正回転の最小値
-#define DUTY_R_LOW 4600        // 逆回転の最小値
-#define DUTY_STEP 100
-
 #define PIN_1 19               // 車輪サーボ1
 #define PIN_2 22               // 車輪サーボ2
 #define PIN_SS 23              // センサーサーボ
 #define CHANNEL_1 6            // チャンネル1
 #define CHANNEL_2 7            // チャンネル2
 #define FREQ 50                // PWM周波数
-#define RESOLUTION 16          // 16ビットの分解能（0～65535）
+#define RESOLUTION 12          // 12ビットの分解能（4096段階）
 #define DEVICE_NAME "Secaro"   // Bluetoothデバイス名
 
 // I2C PIN
@@ -37,6 +33,12 @@
 // タイムアウト
 #define TIME_OUT_SENSOR 100
 #define TIME_OUT_SERIAL 500
+
+// 各デューティ比
+int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止
+const int centerDutyHigh = 313;  // 停止範囲の上限
+const int centerDutyLow = 290;   // 停止範囲の下限
+const int step = 10;         // デューティの刻み幅
 
 BluetoothSerial SerialBT;
 char command = '\0';                 // 指令
@@ -75,6 +77,11 @@ void setup() {
     // LEDC PIN設定
     ledcAttachChannel(PIN_1, FREQ, RESOLUTION, CHANNEL_1);
     ledcAttachChannel(PIN_2, FREQ, RESOLUTION, CHANNEL_2);
+
+    // 初期停止
+    ledcWrite(PIN_1, centerDuty);
+    ledcWrite(PIN_2, centerDuty);
+    delay(1000);
 
     // センサーサーボのPIN設定
     sensorServo.attach(PIN_SS);
@@ -163,8 +170,8 @@ void loop() {
       avoidTimeStart = millis();
     } else {
       // 前進
-      ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-      ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
+      ledcWrite(PIN_1, centerDutyHigh + step*spdL);
+      ledcWrite(PIN_2, centerDutyLow - step*spdR);
 
       currentMillis = millis();
       if (previousMillis == 0) { // 初回の場合
@@ -198,12 +205,12 @@ void loop() {
     }
   } else if (command == 'B') {
     // 後退
-    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
-    ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, centerDutyLow - step*spdL);
+    ledcWrite(PIN_2, centerDutyHigh + step*spdR);
   } else if (command == 'L') {
     // 左旋回
-    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP*(spdL-1));
-    ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP*(spdR-1));
+    ledcWrite(PIN_1, centerDutyLow - step*spdL);
+    ledcWrite(PIN_2, centerDutyLow - step*spdR);
   } else if (command == 'R') {
     if (obstacleFlg) { // 回避モード
       avoidTimeCurrent = millis();
@@ -226,18 +233,18 @@ void loop() {
         command_taihi = '\0';        
       } else {
         // 右旋回
-        ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-        ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+        ledcWrite(PIN_1, centerDutyHigh + step*spdL);
+        ledcWrite(PIN_2, centerDutyHigh + step*spdR);
       }
     } else {
       // 右旋回
-      ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP*(spdL-1));
-      ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP*(spdR-1));
+      ledcWrite(PIN_1, centerDutyHigh + step*spdL);
+      ledcWrite(PIN_2, centerDutyHigh + step*spdR);
     }
   } else if (command == 'S') {
     // 停止
-    ledcWrite(PIN_1, 0);
-    ledcWrite(PIN_2, 0);
+    ledcWrite(PIN_1, centerDuty);
+    ledcWrite(PIN_2, centerDuty);
   } else if (command == 'P') {
     // 通信確認用
     SerialBT.println("PING OK");

@@ -5,14 +5,16 @@
 #include "esp32-hal-ledc.h"
 #include "M5Atom.h"
 
-#define DUTY_F_LOW 5100   // 正回転の最小値
-#define DUTY_R_LOW 4600   // 逆回転の最小値
-#define DUTY_STEP 300
 #define PIN_1 19          // 車輪サーボ1
 #define PIN_2 22          // 車輪サーボ2
 #define FREQ 50           // PWM周波数
-#define RESOLUTION 16     // 16ビットの分解能（0～65535）  
+#define RESOLUTION 12     // 12ビットの分解能（4096段階）
 
+// 各デューティ比
+int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止
+const int step = 50;         // デューティの刻み幅
+
+// 実行フラグ
 bool run = true;
 
 void setup() {
@@ -25,34 +27,39 @@ void setup() {
 
     // LEDC PIN設定
     ledcAttach(PIN_1, FREQ, RESOLUTION);
-    ledcAttach(PIN_2, FREQ, RESOLUTION);       
+    ledcAttach(PIN_2, FREQ, RESOLUTION);
+
+    // 初期停止
+    ledcWrite(PIN_1, centerDuty);
+    ledcWrite(PIN_2, centerDuty);
+    delay(1000);
 }
 
 void loop() {
   if(run == true) {
     // 前進
-    ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP);
-    ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP);    
+    ledcWrite(PIN_1, centerDuty + step);
+    ledcWrite(PIN_2, centerDuty - step);
     delay(2000);
 
     // 後退
-    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP);
-    ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP);
+    ledcWrite(PIN_1, centerDuty - step);
+    ledcWrite(PIN_2, centerDuty + step);
     delay(2000);
     
     // 左旋回
-    ledcWrite(PIN_1, DUTY_R_LOW - DUTY_STEP);
-    ledcWrite(PIN_2, DUTY_R_LOW - DUTY_STEP);
+    ledcWrite(PIN_1, centerDuty - step);
+    ledcWrite(PIN_2, centerDuty - step);
     delay(2000);
 
     // 右旋回
-    ledcWrite(PIN_1, DUTY_F_LOW + DUTY_STEP);
-    ledcWrite(PIN_2, DUTY_F_LOW + DUTY_STEP);
+    ledcWrite(PIN_1, centerDuty + step);
+    ledcWrite(PIN_2, centerDuty + step);
     delay(2000);
 
     // 停止
-    ledcWrite(PIN_1, 0);
-    ledcWrite(PIN_2, 0);
+    ledcWrite(PIN_1, centerDuty);
+    ledcWrite(PIN_2, centerDuty);
 
     run = false;
   }
