@@ -5,10 +5,10 @@
 #include "esp32-hal-ledc.h"
 #include "M5Atom.h"
 
-#define PIN_1 19          // 車輪サーボ1
-#define PIN_2 22          // 車輪サーボ2
-#define FREQ 50           // PWM周波数
-#define RESOLUTION 12     // 12ビットの分解能（4096段階）
+const int PIN_1 = 19;          // 車輪サーボ1
+const int PIN_2 = 22;          // 車輪サーボ2
+const int FREQ = 50;           // PWM周波数
+const int RESOLUTION = 12;     // 12ビットの分解能（4096段階）
 
 // 各デューティ比
 const int centerDuty = (int)(4096 * 1.5 / 20.0); // 1.5ms に相当する duty（約307） → 停止

@@ -4,9 +4,9 @@
 #include "esp32-hal-ledc.h"
 #include "M5Atom.h"
 
-#define PIN_1 19          // 車輪サーボ1
-#define FREQ 50           // PWM周波数
-#define RESOLUTION 12     // 12ビットの分解能（4096段階）
+const int PIN_1 = 19;          // 車輪サーボ1
+const int FREQ = 50;           // PWM周波数
+const int RESOLUTION = 12;     // 12ビットの分解能（4096段階）
 
 // 各デューティ比（12bit対応）
 const int minDuty = (int)(4096 * 0.5 / 20.0); // 0.5ms に相当する duty（約102） → 最大逆回転

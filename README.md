@@ -6,39 +6,72 @@
 
     └── servo.ino
 
+
 - ロボット動作
 
   robot
 
     └── robot.ino
 
+
 - ラジコン動作
 
   remote
 
-    └── remote.ino
+    └── remote_bluetooth/　　　# Bluetooth版
+
+             └── remote_bluetooth.ino
+
+    └── remote_wifi/　　　　　　# Wi-Fi版
+
+             └── remote_wifi.ino
+
 
 - 自律走行
 
   auto
 
-    └── auto.ino
-  
+    └── auto_bluetooth/　　　　# Bluetooth版
+
+             └── auto_bluetooth.ino
+
+    └── auto_wifi/　　　　　　　# Wi-Fi版
+
+             └── auto_wifi.ino
+
+
 - ラジコン動作＆自律走行用コントローラー
 
   controller
 
-    ├── exe/　　　　　　　　　　　　　　　# 実行ファイル
+    └── controller_bluetooth/　　# Bluetooth版
 
-    │        └── controller.exe
+             ├── exe/
 
-    ├── src/　　　　　　　　　　　　　　　# ソースコード
+             │        └── controller.exe　# 実行ファイル
 
-    │        ├── controller.py
+             ├── src/
 
-    │        ├── ui.kv
+             │        ├── controller.py
 
-    │        └── ipaexg.ttf　　　　　　　# フォントのリソース
+             │        ├── ui.kv
 
-    └── README.md
+             │        └── ipaexg.ttf　　　# フォントのリソース
 
+             └── README.md
+
+    └── controller_wifi/　　　　　# Wi-Fi版
+
+             ├── exe/
+
+             │        └── controller.exe
+
+             ├── src/
+
+             │        ├── controller.py
+
+             │        ├── ui.kv
+
+             │        └── ipaexg.ttf
+
+             └── README.md
