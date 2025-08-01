@@ -9,7 +9,7 @@
 - ロボット動作
 
   robot  
-  └─ robot.ino
+  └─ robot.ino  
 
 
 - ラジコン動作
@@ -24,28 +24,28 @@
 - 自律走行
 
   auto  
-    └─ auto_bluetooth/　　　　　　　　# Bluetooth版  
+　└─ auto_bluetooth/　　　　　　　　# Bluetooth版  
 　　　　└─ auto_bluetooth.ino  
-    └─ auto_wifi/　　　　　　　　　　　# Wi-Fi版  
+　└─ auto_wifi/　　　　　　　　　　　# Wi-Fi版  
 　　　　└─ auto_wifi.ino  
 
 
 - ラジコン動作＆自律走行用コントローラー
 
   controller  
-    └─ controller_bluetooth/　　　　　# Bluetooth版  
-　　　　├── exe/  
+　└─ controller_bluetooth/　　　　　# Bluetooth版  
+　　　　├─ exe/  
 　　　　│        └─ controller.exe　# 実行ファイル  
-　　　　├── src/  
-　　　　│        ├── controller.py  
-　　　　│        ├── ui.kv  
+　　　　├─ src/  
+　　　　│        ├─ controller.py  
+　　　　│        ├─ ui.kv  
 　　　　│        └─ ipaexg.ttf　# フォントのリソース  
 　　　　└─ README.md  
-    └─ controller_wifi/　　　　　　　# Wi-Fi版  
-　　　　├── exe/  
+　└─ controller_wifi/　　　　　　　　# Wi-Fi版  
+　　　　├─ exe/  
 　　　　│        └─ controller.exe  
-　　　　├── src/  
-　　　　│        ├── controller.py  
-　　　　│        ├── ui.kv  
+　　　　├─ src/  
+　　　　│        ├─ controller.py  
+　　　　│        ├─ ui.kv  
 　　　　│        └─ ipaexg.ttf  
 　　　　└─ README.md  
