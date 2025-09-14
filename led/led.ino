@@ -1,6 +1,6 @@
-// LED PIN 38
+// LED PIN 33
 
-const int LED_PIN = 38;
+const int LED_PIN = 33;
 
 void setup() {
   // LEDピンを出力モードに設定
